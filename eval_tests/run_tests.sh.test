@@ -1,0 +1,5 @@
+#!/bin/sh
+gcc -Wall -Wextra -Werror -I ./libft/includes -I ./ -o get_next_line.o -c get_next_line.c
+gcc -Wall -Wextra -Werror -I ./ -c ./eval_tests/single_long_line.c ./eval_tests/closing_newline.c ./eval_tests/large_file.c ./eval_tests/single_line_diff.c ./eval_tests/return_values.c ./eval_tests/multiple_fd.c
+gcc -Wall -Wextra -Werror -I ./eval_tests -o main.o -c ./eval_tests/main.c
+gcc -g -o test_gnl main.o get_next_line.o single_long_line.o closing_newline.o large_file.o single_line_diff.o return_values.o multiple_fd.o -L ./libft/ -lft

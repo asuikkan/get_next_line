@@ -1,0 +1,45 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   gnl_tests.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: asuikkan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/12/15 14:57:48 by asuikkan          #+#    #+#             */
+/*   Updated: 2021/12/15 14:57:53 by asuikkan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "tests.h"
+#include "get_next_line.h"
+
+void single_long_line(void)
+{
+    char    *line;
+    char    *str;
+    int     pipefd[2];
+    int     count;
+    int     stdout;
+
+    str = (char *)malloc(sizeof(char) * 1000000);
+    bzero(str, 1);
+    count = 25;
+    while (count--)
+        strcat(str, "This line will be concatenated A MILLION times");
+    pipe(pipefd);
+    stdout = dup(1);
+    dup2(pipefd[1], 1);
+    if (str)
+        write(1, str, strlen(str));
+    close(pipefd[1]);
+    dup2(stdout, 1);
+    printf(COLOR_BLUE "\n\n!!!!! START OF SINGLE LONG LINE TEST !!!!!\n\n" COLOR_RESET);
+    get_next_line(pipefd[0], &line);
+    if (!strcmp(line, str))
+        printf(COLOR_GREEN "single long line test SUCCESS\n" COLOR_RESET);
+    else
+        printf(COLOR_RED "single long line test FAILED\n" COLOR_RESET);
+    assert(strcmp(line, str) == 0);
+	free(line);
+	free(str);
+}

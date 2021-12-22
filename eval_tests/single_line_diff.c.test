@@ -1,0 +1,51 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   single_line_diff.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: asuikkan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/12/17 14:23:33 by asuikkan          #+#    #+#             */
+/*   Updated: 2021/12/17 14:23:35 by asuikkan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "tests.h"
+#include "get_next_line.h"
+
+void	single_line_diff(void)
+{
+	char	*line;
+	int		fd;
+	int		pipefd1[2];
+	int		pipefd2[2];
+	int		ret;
+	char	no_nl[] = "this line will be saved twice";
+	char	with_nl[] = "this line will be saved twice\n";
+
+	pipe(pipefd1);
+	fd = dup(1);
+	dup2(pipefd1[1], 1);
+	write(1, no_nl, strlen(no_nl));
+	close(pipefd1[1]);
+	dup2(fd, 1);
+	printf(COLOR_BLUE "\n\n!!!!! START OF SINGLE LINE WITH AND WITHOUT NL TEST !!!!!\n\n" COLOR_RESET);
+	ret = get_next_line(pipefd1[0], &line);
+	if (ret == 1)
+		printf(COLOR_GREEN "return value == 1\n" COLOR_RESET);
+	else
+		printf(COLOR_RED "return value != 1\n" COLOR_RESET);
+	free(line);
+	pipe(pipefd2);
+	fd = dup(1);
+	dup2(pipefd2[1], 1);
+	write(1, with_nl, strlen(with_nl));
+	close(pipefd2[1]);
+	dup2(fd, 1);
+	ret = get_next_line(pipefd2[0], &line);
+	if (ret == 1)
+		printf(COLOR_GREEN "return value == 1\n" COLOR_RESET);
+	else
+		printf(COLOR_RED "return value != 1\n" COLOR_RESET);
+	free(line);
+}

@@ -1,0 +1,48 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   large_file.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: asuikkan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/12/16 14:56:32 by asuikkan          #+#    #+#             */
+/*   Updated: 2021/12/16 14:56:33 by asuikkan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "tests.h"
+#include "get_next_line.h"
+
+void    large_file(void)
+{
+    char    *line;
+    int     fd_file;
+	int		fd_gnl;
+	int		fd_diff;
+	int		diff_bytes;
+	int		row;
+
+	fd_file = open("eval_tests/temp_files/big_file.txt", O_RDONLY);
+	fd_gnl = open("eval_tests/temp_files/big_file_gnl.txt", O_CREAT | O_RDWR, 0755);
+	printf(COLOR_BLUE "\n\n!!!!! LARGE FILE TEST START !!!!!\n\n" COLOR_RESET);
+	row = 1;
+	while (get_next_line(fd_file, &line) == 1)
+	{
+		write(fd_gnl, line, strlen(line));
+		free(line);
+		if (row < 2000)
+			write(fd_gnl, "\n", 1);
+		row++;
+	}
+	close(fd_file);
+	close(fd_gnl);
+	system("diff eval_tests/temp_files/big_file.txt eval_tests/temp_files/big_file_gnl.txt > eval_tests/temp_files/big_file_diff.txt");
+	fd_diff = open("eval_tests/temp_files/big_file_diff.txt", O_RDONLY);
+	diff_bytes = read(fd_diff, NULL, 100);
+	if (diff_bytes == 0)
+		printf(COLOR_GREEN "large file diff SUCCESS\n" COLOR_RESET);
+	else
+		printf(COLOR_RED "large file diff FAILED\n" COLOR_RESET);
+	system("rm -f eval_tests/temp_files/big_file_gnl.txt");
+	system("rm -f eval_tests/temp_files/big_file_diff.txt");
+}

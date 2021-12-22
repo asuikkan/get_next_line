@@ -1,0 +1,66 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   closing_newline.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: asuikkan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/12/21 14:00:14 by asuikkan          #+#    #+#             */
+/*   Updated: 2021/12/21 14:00:17 by asuikkan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "tests.h"
+#include "get_next_line.h"
+
+void	closing_newline(void)
+{
+	char	*line;
+	int		pipefd[2];
+	int		stderr;
+	char	str1[] = "12345678";
+	char	str2[] = "asdfghjklllmnnbvc";
+	char	str3[] = "this is the last line hello";
+	char	str4[] = "\n";
+
+	stderr = dup(2);
+	pipe(pipefd);
+	dup2(pipefd[1], 2);
+	write(2, str1, strlen(str1));
+	write(2, "\n", 1);
+	write(2, str2, strlen(str2));
+	write(2, "\n", 1);
+	write(2, str3, strlen(str3));
+	write(2, "\n", 1);
+	write(2, str4, strlen(str4));
+	close(pipefd[1]);
+	printf(COLOR_BLUE "\n\n!!!!! START OF CLOSING NEWLINE TEST !!!!!\n\n" COLOR_RESET);
+	get_next_line(pipefd[0], &line);
+	if (!strcmp(line, str1))
+		printf(COLOR_GREEN "line check SUCCESS\n" COLOR_RESET);
+	else
+		printf(COLOR_RED "line check FAILED\n" COLOR_RESET);
+	assert(strcmp(line, str1) == 0);
+	free(line);
+	get_next_line(pipefd[0], &line);
+	if (!strcmp(line, str2))
+		printf(COLOR_GREEN "line check SUCCESS\n" COLOR_RESET);
+	else
+		printf(COLOR_RED "line check FAILED\n" COLOR_RESET);
+	assert(strcmp(line, str2) == 0);
+	free(line);
+	get_next_line(pipefd[0], &line);
+	if (!strcmp(line, str3))
+		printf(COLOR_GREEN "line check SUCCESS\n" COLOR_RED);
+	else
+		printf(COLOR_RED "line check FAILED\n" COLOR_RESET);
+	assert(strcmp(line, str3) == 0);
+	free(line);
+	get_next_line(pipefd[0], &line);
+	if (!strcmp(line, ""))
+		printf(COLOR_GREEN "empty string check SUCCESS\n" COLOR_RESET);
+	else
+		printf(COLOR_RED "empty string check FAILED\n" COLOR_RESET);
+	assert(strcmp(line, "") == 0);
+	free(line);
+}

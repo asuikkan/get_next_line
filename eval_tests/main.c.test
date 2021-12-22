@@ -1,0 +1,27 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: asuikkan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/12/16 12:20:41 by asuikkan          #+#    #+#             */
+/*   Updated: 2021/12/16 12:20:44 by asuikkan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "tests.h"
+
+int main(void)
+{
+	return_values();
+	closing_newline();
+	single_long_line();
+	large_file();
+	single_line_diff();
+	multiple_fd();
+	printf("\n");
+	system("leaks test_gnl | grep 'leaked bytes' | cut -d ' ' -f 3-9");
+	printf("\n");
+	return (0);
+}

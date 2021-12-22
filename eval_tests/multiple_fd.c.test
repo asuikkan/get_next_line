@@ -1,0 +1,203 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   multiple_fd.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: asuikkan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/12/22 12:21:15 by asuikkan          #+#    #+#             */
+/*   Updated: 2021/12/22 12:21:17 by asuikkan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "tests.h"
+#include "get_next_line.h"
+
+void	multiple_fd(void)
+{
+	char	*line;
+	char	str1[] = "hello world testing\nfunction called get_next_line\n";
+	char	str2[] = "abcdefghijklm\nopqrstuvwxyz\n0123456789";
+	char	str3[] = "first line\nsecond line\nthird line\nfourth line";
+	char	str4[] = "qwerty\nasdfghj\nzxccvvb\n\n";
+	int		fd1;
+	int		fd2;
+	int		fd3;
+	int		fd4;
+	int		pipefd1[2];
+	int		pipefd2[2];
+	int		pipefd3[2];
+	int		pipefd4[2];
+	int		out_fd1;
+	int		out_fd2;
+	int		out_fd3;
+	int		out_fd4;
+
+	fd1 = 3;
+	out_fd1 = dup(fd1);
+	pipe(pipefd1);
+	dup2(pipefd1[1], fd1);
+	write(fd1, str1, strlen(str1));
+	dup2(out_fd1, fd1);
+	close(pipefd1[1]);
+
+	fd2 = 4;
+	out_fd2 = dup(fd2);
+	pipe(pipefd2);
+	dup2(pipefd2[1], fd2);
+	write(fd2, str2, strlen(str2));
+	dup2(out_fd2, fd2);
+	close(pipefd2[1]);
+
+	fd3 = 5;
+	out_fd3 = dup(fd3);
+	pipe(pipefd3);
+	dup2(pipefd3[1], fd3);
+	write(fd3, str3, strlen(str3));
+	dup2(out_fd3, fd3);
+	close(pipefd3[1]);
+
+	fd4 = 6;
+	out_fd4 = dup(fd4);
+	pipe(pipefd4);
+	dup2(pipefd4[1], fd4);
+	write(fd4, str4, strlen(str4));
+	dup2(out_fd4, fd4);
+	close(pipefd4[1]);
+
+	printf(COLOR_BLUE "\n\n!!!!! BONUS: MULTIPLE FD TEST START !!!!!\n\n" COLOR_RESET);
+
+	get_next_line(pipefd1[0], &line);
+	if (!strcmp(line, "hello world testing"))
+		printf(COLOR_GREEN "fd1 line compare SUCCESS\n" COLOR_RESET);
+	else
+	{
+		printf(COLOR_RED "line compare FAILED\n" COLOR_RESET);
+		printf("expected: hello world testing | result: %s\n", line);
+	}
+	free(line);
+	get_next_line(pipefd2[0], &line);
+	if (!strcmp(line, "abcdefghijklm"))
+		printf(COLOR_GREEN "fd2 line compare SUCCESS\n" COLOR_RESET);
+	else
+	{
+		printf(COLOR_RED "line compare FAILED\n" COLOR_RESET);
+		printf("expected: abcdefghijklm | result: %s\n", line);
+	}
+	free(line);
+	get_next_line(pipefd3[0], &line);
+	if (!strcmp(line, "first line"))
+		printf(COLOR_GREEN "fd3 line compare SUCCESS\n" COLOR_RESET);
+	else
+	{
+		printf(COLOR_RED "line compare FAILED\n" COLOR_RESET);
+		printf("expected: first line | result: %s\n", line);
+	}
+	free(line);
+	get_next_line(pipefd4[0], &line);
+	if (!strcmp(line, "qwerty"))
+		printf(COLOR_GREEN "fd4 line compare SUCCESS\n" COLOR_RESET);
+	else
+	{
+		printf(COLOR_RED "line compare FAILED\n" COLOR_RESET);
+		printf("expected: qwerty | result: %s\n", line);
+	}
+	free(line);
+	get_next_line(pipefd1[0], &line);
+	if (!strcmp(line, "function called get_next_line"))
+		printf(COLOR_GREEN "fd1 line compare SUCCESS\n" COLOR_RESET);
+	else
+	{
+		printf(COLOR_RED "line compare FAILED\n" COLOR_RESET);
+		printf("expected: function called get_next_line | result: %s\n", line);
+	}
+	free(line);
+	get_next_line(pipefd2[0], &line);
+	if (!strcmp(line, "opqrstuvwxyz"))
+		printf(COLOR_GREEN "fd2 line compare SUCCESS\n" COLOR_RESET);
+	else
+	{
+		printf(COLOR_RED "line compare FAILED\n" COLOR_RESET);
+		printf("expected: opqrstuvwxyz | result: %s\n", line);
+	}
+	free(line);
+	get_next_line(pipefd3[0], &line);
+	if (!strcmp(line, "second line"))
+		printf(COLOR_GREEN "fd3 line compare SUCCESS\n" COLOR_RESET);
+	else
+	{
+		printf(COLOR_RED "line compare FAILED\n" COLOR_RESET);
+		printf("expected: second line | result: %s\n", line);
+	}
+	free(line);
+	get_next_line(pipefd4[0], &line);
+	if (!strcmp(line, "asdfghj"))
+		printf(COLOR_GREEN "fd4 line compare SUCCESS\n" COLOR_RESET);
+	else
+	{
+		printf(COLOR_RED "line compare FAILED\n" COLOR_RESET);
+		printf("expected: asdfghj | result: %s\n", line);
+	}
+	free(line);
+	if (get_next_line(pipefd1[0], &line) == 0)
+		printf(COLOR_GREEN "fd1 has been read SUCCESFULLY\n" COLOR_RESET);
+	else
+		printf(COLOR_RED "fd1 is NOT read successfully\n" COLOR_RESET);
+	close(pipefd1[0]);
+	close(fd1);
+	get_next_line(pipefd2[0], &line);
+	if (!strcmp(line, "0123456789"))
+		printf(COLOR_GREEN "fd2 line compare SUCCESS\n" COLOR_RESET);
+	else
+	{
+		printf(COLOR_RED "line compare FAILED\n" COLOR_RESET);
+		printf("expected: 0123456789 | result: %s\n", line);
+	}
+	free(line);
+	get_next_line(pipefd3[0], &line);
+	if (!strcmp(line, "third line"))
+		printf(COLOR_GREEN "fd3 line compare SUCCESS\n" COLOR_RESET);
+	else
+	{
+		printf(COLOR_RED "line compare FAILED\n" COLOR_RESET);
+		printf("expected: third line | result: %s\n", line);
+	}
+	free(line);
+	get_next_line(pipefd4[0], &line);
+	if (!strcmp(line, "zxccvvb"))
+		printf(COLOR_GREEN "fd4 line compare SUCCESS\n" COLOR_RESET);
+	else
+	{
+		printf(COLOR_RED "line compare FAILED\n" COLOR_RESET);
+		printf("expected: zxccvvb | result: %s\n", line);
+	}
+	free(line);
+	if (get_next_line(pipefd2[0], &line) == 0)
+		printf(COLOR_GREEN "fd2 has been read SUCCESFULLY\n" COLOR_RESET);
+	else
+		printf(COLOR_RED "fd2 is NOT read successfully\n" COLOR_RESET);
+	close(pipefd2[0]);
+	close(fd2);
+	get_next_line(pipefd3[0], &line);
+	if (!strcmp(line, "fourth line"))
+		printf(COLOR_GREEN "fd3 line compare SUCCESS\n" COLOR_RESET);
+	else
+	{
+		printf(COLOR_RED "line compare FAILED\n" COLOR_RESET);
+		printf("expected: fourth line | result: %s\n", line);
+	}
+	free(line);
+	get_next_line(pipefd4[0], &line);
+	if (line == NULL || !strcmp(line, ""))
+		printf(COLOR_GREEN "fd4 line compare SUCCESS\n" COLOR_RESET);
+	else
+	{
+		printf(COLOR_RED "line compare FAILED\n" COLOR_RESET);
+		printf("expected: | result: %s\n", line);
+	}
+	free(line);
+	close(pipefd3[0]);
+	close(fd3);
+	close(pipefd4[0]);
+	close(fd4);
+}

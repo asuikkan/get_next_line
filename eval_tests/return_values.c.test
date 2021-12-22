@@ -1,0 +1,62 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   return_values.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: asuikkan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/12/21 15:16:32 by asuikkan          #+#    #+#             */
+/*   Updated: 2021/12/21 15:16:33 by asuikkan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "tests.h"
+#include "get_next_line.h"
+
+void	return_values(void)
+{
+	char	*line;
+	char	str1[] = "abcde\n";
+	int		pipefd[2];
+	int		out_fd;
+
+	printf(COLOR_BLUE "\n\n!!!!! RETURN VALUES TEST START !!!!!\n\n" COLOR_RESET);
+	if (get_next_line(-10, NULL) == -1)
+		printf(COLOR_GREEN "return values test SUCCESS\n" COLOR_RESET);
+	else
+		printf(COLOR_RED "return values test FAILED\n" COLOR_RESET);
+	if (get_next_line(-99, NULL) == -1)
+		printf(COLOR_GREEN "return values test SUCCESS\n" COLOR_RESET);
+	else
+		printf(COLOR_RED "return values test FAILED\n" COLOR_RESET);
+	if (get_next_line(-1, &line) == -1)
+		printf(COLOR_GREEN "return values test SUCCESS\n" COLOR_RESET);
+	else
+		printf(COLOR_RED "return values test FAILED\n" COLOR_RESET);
+	if (get_next_line(10, &line) == -1)
+		printf(COLOR_GREEN "return values test SUCCESS\n" COLOR_RESET);
+	else
+		printf(COLOR_RED "return values test FAILED\n" COLOR_RESET);
+
+	out_fd = dup(1);
+	pipe(pipefd);
+	dup2(pipefd[1], 1);
+	write(1, str1, strlen(str1));
+	close(pipefd[1]);
+	dup2(out_fd, 1);
+
+	if (get_next_line(pipefd[0], &line) == 1)
+		printf(COLOR_GREEN "line read SUCCESFULLY\n" COLOR_RESET);
+	else
+		printf(COLOR_RED "FALSE return value | expected 1\n" COLOR_RESET);
+	free(line);
+	if (get_next_line(pipefd[0], &line) == 0)
+		printf(COLOR_GREEN "EOF detected SUCCESSFULLY\n" COLOR_RESET);
+	else
+		printf(COLOR_RED "EOF detect FAILED\n" COLOR_RESET);
+	if (get_next_line(pipefd[0], &line) == 0)
+		printf(COLOR_GREEN "EOF detected SUCCESSFULLY\n" COLOR_RESET);
+	else
+		printf(COLOR_RED "EOF detect FAILED\n" COLOR_RESET);
+	close(pipefd[0]);
+}

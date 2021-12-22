@@ -1,0 +1,35 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tests.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: asuikkan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/12/16 12:17:23 by asuikkan          #+#    #+#             */
+/*   Updated: 2021/12/16 12:17:26 by asuikkan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef TESTS_H
+# define TESTS_H
+
+#define COLOR_BLUE	"\x1b[34m"
+#define COLOR_GREEN	"\x1b[32m"
+#define COLOR_RED	"\x1b[31m"
+#define COLOR_RESET	"\x1b[0m"
+
+#include <unistd.h>
+#include <strings.h>
+#include <stdio.h>
+#include <assert.h>
+#include <stdlib.h>
+#include <fcntl.h>
+
+void    single_long_line(void);
+void	closing_newline(void);
+void	large_file(void);
+void	single_line_diff(void);
+void	return_values(void);
+void	multiple_fd(void);
+
+#endif
